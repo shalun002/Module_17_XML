@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.IO;
 
 /*
 1.	Прочитать содержимое XML файла со списком последних новостей по ссылке https://habrahabr.ru/rss/interesting/  Создать класс Item со свойствами: Title, Link, Description, PubDate.
@@ -55,14 +56,14 @@ namespace Module_17_XML
             {
                 Console.WriteLine(item.Name);
 
-                foreach (XmlNode ch in item.ChildNodes )
+                foreach (XmlNode ch in item.ChildNodes)
                 {
                     Console.WriteLine(ch.Name);
                     if (ch.Name == "item")
                     {
                         HabrNews hNews = new HabrNews();
 
-                        foreach (XmlNode x in item.ChildNodes)
+                        foreach (XmlNode x in ch.ChildNodes)
                         {
                             if(x.Name == "title")
                             {
@@ -78,7 +79,7 @@ namespace Module_17_XML
                             }
                             else if (x.Name == "PubDate")
                             {
-                                hNews.PubDate = Int32.Parse(;
+                                hNews.PubDate = DateTime.Parse(x.InnerText);
                             }
                             Console.WriteLine("-->" + x.Name);
                             Console.WriteLine("-->" + x.InnerText);
@@ -94,6 +95,24 @@ namespace Module_17_XML
                 Console.WriteLine(item.Link);
                 Console.WriteLine("");
             }
+
+
+            Directory.CreateDirectory(@"C:\Site\");
+
+            FileInfo fi = new FileInfo(@"C:\Site\Text.txt");
+            FileStream fs = fi.Create();
+            fs.Close();
+
+            StreamWriter sw = new StreamWriter(@"C:\Site\Text.txt");
+            foreach (var item in habrNews)
+            {
+                sw.Write(item.Title);
+                sw.Write(item.Link);
+                sw.Write(item.Description);
+                sw.Write(item.PubDate);
+                sw.WriteLine(" ");
+            }
+            sw.Close();
         }
     }
 }
